@@ -1,0 +1,124 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:a4.ViewModels;assembly=a4"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="500"
+				Width="900" Height="500" Padding="10"
+        x:Class="a4.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Client Mansurov"
+        CanResize="False">
+  <Window.Styles>
+    
+    <Style Selector="WrapPanel">
+      <Setter Property="Width" Value="380"/>
+      <Setter Property="Margin" Value="0 0 0 10"/>
+    </Style>
+    <Style Selector="TextBlock.Label">
+      <Setter Property="Height" Value="20"/>
+      <Setter Property="TextAlignment" Value="Right"/>
+      <Setter Property="Margin" Value="0 0 5 0"/>
+    </Style>
+  </Window.Styles>
+
+  <Window.Resources>
+    <ImageBrush Source="/Assets/OK.png" x:Key="ok"/>
+    <ImageBrush Source="/Assets/NOT_OK.png" x:Key="not_ok"/>
+    <ImageBrush Source="/Assets/UNDEF.png" x:Key="undef"/>
+  </Window.Resources>
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <WrapPanel Width="880">
+    <DockPanel Width="400" Height="480" HorizontalAlignment="Center">
+      <StackPanel DockPanel.Dock="Top">
+        <WrapPanel Width="100" HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="Client Mansurov"/>
+        </WrapPanel>
+        <WrapPanel x:Name="serverChoose" IsVisible="True">
+          <TextBlock Classes="Label">Server:</TextBlock>
+          <TextBox Width="230" IsEnabled="True" Text="{Binding ServerAddress}"/>
+          <TextBlock Width="40" Classes="Label">Port:</TextBlock>
+          <TextBox Width="60" IsEnabled="True" Text="{Binding ServerPort}"/>
+        </WrapPanel>
+        <WrapPanel>
+          <Button Command="{Binding oncCheck}" Content="Check Connection" Margin="0 0 0 0"/>
+          <Button Width="32" Height="32" IsEnabled="False" Background="{StaticResource ResourceKey=undef}" x:Name="imgChecked"/>
+          <Button Command="{Binding oncPrList}" Content="Get Procedure List" Margin="10 0 0 0"/>
+        </WrapPanel>
+        <WrapPanel>
+          <ComboBox x:Name="funcList"
+                    Width="340" Height="32"
+                    SelectedItem="{Binding SelectedFunction, Mode=TwoWay}"
+                    Items="{Binding AvailableFunc, Mode=TwoWay}">
+          </ComboBox>
+        </WrapPanel>
+        <Border
+          BorderThickness="2"
+          BorderBrush="Black"
+				>
+          <WrapPanel>
+            <TextBlock Text="Function info:" Margin="5"/>
+            <ScrollViewer Height="80" Width="370" Margin="2 5 2 0" VerticalScrollBarVisibility="Visible" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+              <TextBlock Text="{Binding FuncInfo, Mode=TwoWay}"/>
+            </ScrollViewer>
+          </WrapPanel>
+        </Border>
+        <WrapPanel Margin="0 3">
+          <TextBox Width="280" Text="{Binding DataStr}" x:Name="DataText"></TextBox>
+          <Button Width="100" Command="{Binding oncSend}">Send</Button>
+        </WrapPanel>
+        <WrapPanel>
+          <TextBlock  Text="{Binding OutputString}" />
+        </WrapPanel>
+        <Border
+          BorderThickness="2"
+          BorderBrush="Black"
+				>
+          <WrapPanel>
+            <TextBlock Text="Result:" Margin="5"/>
+            <ScrollViewer Height="80" Width="370" Padding="5 0 15 0" Margin="5 5 5 0" VerticalScrollBarVisibility="Visible" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+              <TextBlock Width="330" Text="{Binding ResultText, Mode=TwoWay}" TextWrapping="Wrap"/>
+            </ScrollViewer>
+          </WrapPanel>
+        </Border>
+      </StackPanel>
+      <StackPanel
+                  DockPanel.Dock="Bottom"
+                  Margin="10"
+                  >
+        <ScrollViewer Height="50" Width="380"
+                      VerticalScrollBarVisibility="Visible"
+                  >
+          <TextBlock FontSize="8" Text="{Binding TLog, Mode=TwoWay}" TextWrapping="Wrap"/>
+        </ScrollViewer>
+      </StackPanel>
+    </DockPanel>
+    <StackPanel Width="480">
+      <TextBlock Text="Plot" Width="480" TextAlignment="Center"/>
+      <Border
+				BorderThickness="2"
+				BorderBrush="Black"
+        Margin="10"
+				>
+        <oxy:Plot x:Name="plot" Grid.Row="1" Grid.Column="1" Width="440" Height="440">
+          <oxy:Plot.Series>
+            <oxy:LineSeries Title="Value" DataFieldX="X"
+                        DataFieldY="Y"
+                        Items="{Binding Points}"
+                        StrokeThickness="2" Color="Blue" />
+          </oxy:Plot.Series>
+          <oxy:Plot.Axes>
+            <oxy:LinearAxis Title="{Binding Axe2Name, Mode=TwoWay}" Position="Left" TickStyle="Crossing" MajorGridlineStyle="None" MinorGridlineStyle="None" />
+            <oxy:LinearAxis Title="{Binding Axe1Name, Mode=TwoWay}" Position="Bottom" TickStyle="Crossing" MajorGridlineStyle="None" MinorGridlineStyle="None" />
+          </oxy:Plot.Axes>
+        </oxy:Plot>
+        
+      </Border>
+    </StackPanel>
+  </WrapPanel>
+</Window>
