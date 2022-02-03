@@ -14,29 +14,34 @@ namespace a4.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public static string ServerAddress { 
+        public static string ServerAddress
+        {
             get { return Client.Address; }
-            set { 
+            set
+            {
                 Client.Address = value;
                 a4.Views.MainWindow.Current.changeImgChecked(STATE_CONNECTION.UNDEFINED);
-            } 
+            }
         }
-        public static string ServerPort { 
-            get { return Client.Port; } 
-            set { 
+        public static string ServerPort
+        {
+            get { return Client.Port; }
+            set
+            {
                 Client.Port = value;
                 a4.Views.MainWindow.Current.changeImgChecked(STATE_CONNECTION.UNDEFINED);
-            } 
+            }
         }
         public static string DataStr { get; set; }
         public static string OutputString { get; set; }
-        public string SelectedFunction 
-        { 
-            get=>SelectedFunc; 
-            set{
+        public string SelectedFunction
+        {
+            get => SelectedFunc;
+            set
+            {
                 SelectedFunc = value;
                 if (!(value is null))
-                    getFuncInfo(value); 
+                    getFuncInfo(value);
             }
         }
         public List<NamedSeries> Points
@@ -48,7 +53,7 @@ namespace a4.ViewModels
         {
             DataStr = "";
             TLog = "Start logging\n";
-            
+
         }
 
         public void PrepareValues()
@@ -111,8 +116,22 @@ namespace a4.ViewModels
         {
             string response = SendAndReceive(new RequestData("search", null, null));
             ResponseData responseData = JsonSerializer.Deserialize<ResponseData>(response);
-            string[] funcs = JsonSerializer.Deserialize<string[]>(responseData.Result);
-            AvailableFunc = funcs;
+            if (responseData.Error != "")
+            {
+                FuncInfo = String.Format("Error: {0}", responseData.Error);
+            }
+            else
+            {
+                try
+                {
+                    string[] funcs = JsonSerializer.Deserialize<string[]>(responseData.Result);
+                    AvailableFunc = funcs;
+                }
+                catch (Exception e)
+                {
+                    AvailableFunc = null;
+                }
+            }
             //SelectedFunction = funcs[1];
             Views.MainWindow.Current.setSelectedFunc(0);
         }
@@ -131,7 +150,8 @@ namespace a4.ViewModels
                 {
                     FuncInfo = rd.Result;
                 }
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 FuncInfo = "";
                 AvailableFunc = new string[0] { };
